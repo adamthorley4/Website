@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockSight AI — See the Signal Before the Move</title>
+  <meta name="description" content="Real-time market intelligence that detects market-moving signals before the broader market reacts. See the signal before the move.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== VARIABLES ===== */
+    :root {
+      --bg:        #080c14;
+      --bg-2:      #0d1321;
+      --teal:      #00C9A7;
+      --blue:      #2979FF;
+      --green:     #00D97E;
+      --red:       #FF5B7A;
+      --text:      #EEF2FF;
+      --text-2:    #7A8BA8;
+      --text-3:    #3D4F6B;
+      --border:    rgba(120,160,210,0.09);
+      --border-hi: rgba(0,201,167,0.28);
+      --glass:     rgba(10,16,30,0.65);
+      --glass-b:   rgba(255,255,255,0.05);
+      --grad:      linear-gradient(135deg, #00C9A7 0%, #2979FF 100%);
+      --grad-text: linear-gradient(130deg, #00C9A7 0%, #5AADFF 55%, #2979FF 100%);
+    }
+
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== BG LAYER ===== */
+    .bg-layer {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+    .bg-layer::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,201,167,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,201,167,0.035) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 90% 65% at 50% 0%, black 10%, transparent 100%);
+    }
+    .bg-layer::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 55% 45% at 10% 15%, rgba(0,201,167,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 45% at 90% 85%, rgba(41,121,255,0.06) 0%, transparent 60%);
+    }
+
+    #pcvs {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      filter: blur(15px);
+    }
+
+    /* ===== UTILS ===== */
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+    section { position: relative; z-index: 1; }
+
+    .grad-text {
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* ===== REVEAL ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .reveal.in { opacity: 1; transform: none; }
+    .d1 { transition-delay: 0.10s; }
+    .d2 { transition-delay: 0.20s; }
+    .d3 { transition-delay: 0.30s; }
+    .d4 { transition-delay: 0.40s; }
+
+    /* ===== SECTION LABELS ===== */
+    .s-label {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 400; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 16px;
+    }
+    .s-label::before { content: ''; display: block; width: 22px; height: 1px; background: var(--teal); }
+    .s-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: clamp(30px, 4vw, 48px);
+      letter-spacing: -0.025em; line-height: 1.08; margin-bottom: 18px;
+    }
+    .s-sub {
+      font-size: 17px; line-height: 1.65;
+      color: var(--text-2); font-weight: 300; max-width: 540px;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 18px 0;
+      border-bottom: 1px solid transparent;
+      transition: background 0.35s, backdrop-filter 0.35s, border-color 0.35s;
+    }
+    nav.scrolled {
+      background: rgba(8,12,20,0.88);
+      backdrop-filter: blur(22px) saturate(1.4);
+      border-color: var(--border);
+    }
+    .nav-row { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+    .nav-logo img { height: 34px; border-radius: 6px; }
+    .nav-logo-name {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+    .nav-logo-name em { font-style: normal; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a { color: var(--text-2); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 22px; background: var(--grad);
+      color: #050a12; font-family: 'DM Sans', sans-serif;
+      font-weight: 700; font-size: 13.5px; border: none; border-radius: 8px;
+      cursor: pointer; text-decoration: none;
+      letter-spacing: 0.01em; white-space: nowrap;
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,201,167,0.28); }
+    .ham { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .ham span { display: block; width: 22px; height: 2px; background: var(--text-2); border-radius: 2px; }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 130px 0 80px;
+    }
+    .hero-content { max-width: 760px; }
+
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px 6px 8px;
+      background: rgba(0,201,167,0.07);
+      border: 1px solid rgba(0,201,167,0.22);
+      border-radius: 100px; margin-bottom: 30px;
+      font-size: 11.5px; font-weight: 500; color: var(--teal);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+      animation: pdot 2.2s ease-in-out infinite;
+    }
+    @keyframes pdot {
+      0%,100% { box-shadow: 0 0 0 0 rgba(0,217,126,0.5); }
+      60%      { box-shadow: 0 0 0 8px rgba(0,217,126,0); }
+    }
+
+    .hero-h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(50px, 7.5vw, 88px);
+      line-height: 0.97;
+      letter-spacing: -0.035em;
+      margin-bottom: 26px;
+    }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 18.5px);
+      line-height: 1.7; color: var(--text-2); font-weight: 300;
+      max-width: 530px; margin-bottom: 44px;
+    }
+
+    /* email form */
+    .email-wrap {
+      display: flex; flex-direction: column; gap: 14px; max-width: 490px;
+    }
+    .email-form {
+      display: flex;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-hi);
+      border-radius: 12px; overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .email-form:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0,201,167,0.12);
+    }
+    .email-inp {
+      flex: 1; background: transparent; border: none;
+      padding: 15px 20px; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none;
+    }
+    .email-inp::placeholder { color: var(--text-3); }
+    .email-btn {
+      margin: 6px; padding: 11px 22px;
+      background: var(--grad); color: #050a12;
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 13.5px;
+      border: none; border-radius: 8px; cursor: pointer;
+      white-space: nowrap; letter-spacing: 0.02em;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .email-btn:hover { opacity: 0.88; transform: scale(1.02); }
+    .form-note {
+      font-size: 12px; color: var(--text-3);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .success-msg {
+      display: none; align-items: center; gap: 10px;
+      padding: 14px 18px;
+      background: rgba(0,217,126,0.08);
+      border: 1px solid rgba(0,217,126,0.22);
+      border-radius: 10px;
+      color: var(--green); font-size: 14px; font-weight: 500;
+    }
+    .success-msg.show { display: flex; }
+
+    .hero-stats {
+      display: flex; gap: 44px;
+      margin-top: 60px; padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-val {
+      display: block;
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 28px; letter-spacing: -0.02em;
+      background: var(--grad-text);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-lbl { font-size: 12.5px; color: var(--text-3); margin-top: 3px; }
+
+    /* ===== TICKER ===== */
+    .ticker-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,12,20,0.6);
+      padding: 11px 0; position: relative; z-index: 2;
+    }
+    .ticker-inner { display: flex; gap: 40px; width: max-content; animation: tick 35s linear infinite; }
+    .ticker-wrap:hover .ticker-inner { animation-play-state: paused; }
+    @keyframes tick { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .t-item { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; white-space: nowrap; }
+    .t-sym  { color: var(--text-2); font-weight: 500; }
+    .t-px   { color: var(--text); }
+    .t-up   { color: var(--green); }
+    .t-dn   { color: var(--red); }
+    .t-sep  { color: var(--text-3); }
+
+    /* ===== HOW IT WORKS ===== */
+    .hiw { padding: 130px 0; }
+    .hiw-head { margin-bottom: 72px; }
+    .steps {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 2px;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute; top: 43px; left: 8%; right: 8%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-hi) 20%, var(--border-hi) 80%, transparent);
+      z-index: 0;
+    }
+    .step {
+      background: var(--glass); border: 1px solid var(--glass-b);
+      border-radius: 16px; padding: 30px 26px;
+      position: relative; z-index: 1;
+      backdrop-filter: blur(12px);
+      transition: border-color 0.3s, transform 0.35s;
+    }
+    .step:hover { border-color: rgba(0,201,167,0.22); transform: translateY(-5px); }
+    .step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+      color: var(--teal); margin-bottom: 18px;
+    }
+    .step-ico {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(0,201,167,0.08); border: 1px solid rgba(0,201,167,0.15);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+    }
+    .step-ico svg { width: 20px; height: 20px; }
+    .step-name {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 15.5px; color: var(--text); margin-bottom: 9px; letter-spacing: -0.01em;
+    }
+    .step-desc { font-size: 13.5px; line-height: 1.6; color: var(--text-2); font-weight: 300; }
+
+    /* ===== ALERT PREVIEW ===== */
+    .ap { padding: 130px 0; }
+    .ap-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .ap-quote {
+      font-size: 15px; line-height: 1.75; color: var(--text-2);
+      font-style: italic; font-weight: 300;
+      padding: 18px 0 18px 20px;
+      border-left: 2px solid var(--teal);
+      margin: 28px 0;
+    }
+
+    /* the card */
+    .a-card {
+      background: rgba(6,11,22,0.94);
+      border: 1px solid rgba(0,201,167,0.18);
+      border-radius: 20px; padding: 28px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03);
+      position: relative; overflow: hidden;
+    }
+    .a-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: var(--grad);
+    }
+    .a-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .a-meta { display: flex; flex-direction: column; gap: 5px; }
+    .a-type { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase; }
+    .a-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); }
+    .bull-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      background: rgba(0,217,126,0.1); border: 1px solid rgba(0,217,126,0.25);
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 500; color: var(--green);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      white-space: nowrap;
+      animation: badge-glow 2.8s ease-in-out infinite;
+    }
+    .bull-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pdot 2.2s infinite; }
+    @keyframes badge-glow {
+      0%,100% { box-shadow: 0 0 0 0 rgba(0,217,126,0); }
+      50%      { box-shadow: 0 0 14px 0 rgba(0,217,126,0.22); }
+    }
+    .a-title {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 17px; line-height: 1.38; letter-spacing: -0.01em;
+      color: var(--text); margin-bottom: 9px;
+    }
+    .a-desc { font-size: 13.5px; line-height: 1.65; color: var(--text-2); font-weight: 300; margin-bottom: 20px; }
+    .a-div  { height: 1px; background: var(--border); margin-bottom: 18px; }
+    .a-slbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+    .chips  { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 11px;
+      background: rgba(41,121,255,0.07); border: 1px solid rgba(41,121,255,0.18);
+      border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: #7AB0FF;
+    }
+    .conf-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+    .conf-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); }
+    .conf-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: var(--green); }
+    .conf-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+    .conf-fill  { height: 100%; width: 0%; background: linear-gradient(90deg, var(--teal), var(--green)); border-radius: 4px; transition: width 1.6s cubic-bezier(0.22,1,0.36,1) 0.5s; }
+    .conf-fill.anim { width: 78%; }
+    .a-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);
+    }
+    .a-src  { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); display: flex; align-items: center; gap: 5px; }
+    .a-act  { font-size: 12px; font-weight: 500; color: var(--teal); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: gap 0.2s; }
+    .a-act:hover { gap: 8px; }
+
+    /* ===== BENEFITS ===== */
+    .ben { padding: 130px 0; }
+    .ben-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; margin-top: 60px; }
+    .b-card {
+      background: var(--glass); border: 1px solid var(--glass-b);
+      border-radius: 20px; padding: 36px 30px;
+      backdrop-filter: blur(12px);
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.35s, box-shadow 0.35s;
+    }
+    .b-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 25% 0%, rgba(0,201,167,0.07) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .b-card:hover::after { opacity: 1; }
+    .b-card:hover { border-color: rgba(0,201,167,0.2); transform: translateY(-6px); box-shadow: 0 24px 52px rgba(0,0,0,0.35); }
+    .b-ico {
+      width: 52px; height: 52px; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px; position: relative; z-index: 1;
+    }
+    .ico-teal  { background: rgba(0,201,167,0.09); border: 1px solid rgba(0,201,167,0.15); }
+    .ico-blue  { background: rgba(41,121,255,0.09); border: 1px solid rgba(41,121,255,0.15); }
+    .ico-green { background: rgba(0,217,126,0.07); border: 1px solid rgba(0,217,126,0.15); }
+    .b-ico svg { width: 24px; height: 24px; }
+    .b-name {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px;
+      letter-spacing: -0.02em; color: var(--text); margin-bottom: 11px;
+      position: relative; z-index: 1;
+    }
+    .b-desc { font-size: 14.5px; line-height: 1.65; color: var(--text-2); font-weight: 300; position: relative; z-index: 1; }
+
+    /* ===== WHO ===== */
+    .who { padding: 130px 0; }
+    .who-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .who-items { display: flex; flex-direction: column; gap: 14px; margin-top: 36px; }
+    .who-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px 22px;
+      background: var(--glass); border: 1px solid var(--glass-b);
+      border-radius: 14px; backdrop-filter: blur(12px);
+      transition: border-color 0.3s;
+    }
+    .who-item:hover { border-color: rgba(0,201,167,0.22); }
+    .wi-ico {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      background: rgba(0,201,167,0.08); border: 1px solid rgba(0,201,167,0.15);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .wi-ico svg { width: 18px; height: 18px; }
+    .wi-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 15px; color: var(--text); margin-bottom: 3px; }
+    .wi-desc  { font-size: 13px; line-height: 1.55; color: var(--text-2); font-weight: 300; }
+
+    /* mini chart panel */
+    .who-panel {
+      background: rgba(6,11,22,0.9); border: 1px solid var(--border);
+      border-radius: 18px; padding: 22px; overflow: hidden;
+    }
+    .mini-svg { width: 100%; height: 110px; display: block; margin-bottom: 14px; }
+    .mkt-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 0; border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .mkt-row:last-child { border-bottom: none; }
+    .mkt-sym { font-size: 11.5px; color: var(--text-2); }
+    .mkt-px  { font-size: 12.5px; color: var(--text); font-weight: 500; }
+    .mkt-chg { font-size: 11.5px; font-weight: 500; }
+    .mkt-up  { color: var(--green); }
+    .mkt-dn  { color: var(--red); }
+
+    /* ===== FINAL CTA ===== */
+    .fcta { padding: 160px 0; }
+    .fcta-inner { text-align: center; max-width: 620px; margin: 0 auto; }
+    .fcta-h {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(36px, 5.5vw, 62px);
+      letter-spacing: -0.035em; line-height: 1.03;
+      color: var(--text); margin-bottom: 18px;
+    }
+    .fcta-sub { font-size: 17px; line-height: 1.65; color: var(--text-2); font-weight: 300; margin-bottom: 44px; }
+    .fcta-form {
+      display: flex; max-width: 450px; margin: 0 auto 14px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border-hi);
+      border-radius: 12px; overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .fcta-form:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,201,167,0.12); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 44px 0; border-top: 1px solid var(--border);
+    }
+    .foot-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .foot-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .foot-logo img { height: 26px; border-radius: 5px; }
+    .foot-logo-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14.5px; color: var(--text-2); }
+    .foot-disc { font-size: 11.5px; color: var(--text-3); max-width: 440px; line-height: 1.65; text-align: center; }
+    .foot-links { display: flex; gap: 22px; list-style: none; }
+    .foot-links a { font-size: 12.5px; color: var(--text-3); text-decoration: none; transition: color 0.2s; }
+    .foot-links a:hover { color: var(--text-2); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 920px) {
+      .steps { grid-template-columns: repeat(2,1fr); }
+      .steps::before { display: none; }
+      .ap-layout, .who-layout { grid-template-columns: 1fr; gap: 48px; }
+      .ben-grid { grid-template-columns: 1fr; }
+      .who-panel { display: none; }
+      .nav-links { display: none; }
+      .ham { display: flex; }
+    }
+    @media (max-width: 580px) {
+      .steps { grid-template-columns: 1fr; }
+      .hero-stats { flex-wrap: wrap; gap: 24px; }
+      .email-form { flex-direction: column; border-radius: 12px; }
+      .email-btn { margin: 0 6px 6px; }
+      .foot-row { flex-direction: column; text-align: center; }
+      .foot-disc { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<canvas id="pcvs"></canvas>
+
+<!-- ===== NAV ===== -->
+<nav id="nav">
+  <div class="container">
+    <div class="nav-row">
+      <a href="#" class="nav-logo">
+        <img src="brand_assets/StockSight Logo.jpeg" alt="StockSight AI logo">
+        <span class="nav-logo-name">Stock<em>Sight</em> AI</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#signal">Live Signal</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#who">Who It's For</a></li>
+      </ul>
+      <a href="#waitlist" class="btn">Get Early Access</a>
+      <button class="ham" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+
+      <div class="live-badge reveal">
+        <span class="live-dot"></span>
+        Real-Time Market Intelligence
+      </div>
+
+      <h1 class="hero-h1 reveal d1">
+        See the signal<br>
+        <span class="grad-text">before the move.</span>
+      </h1>
+
+      <p class="hero-sub reveal d2">
+        StockSight AI monitors thousands of global data sources in real time — detecting geopolitical, macro, and corporate events, then delivering instant, directional alerts before the broader market catches on.
+      </p>
+
+      <div class="email-wrap reveal d3">
+        <div class="email-form" id="h-form">
+          <input class="email-inp" type="email" id="h-email" placeholder="Enter your email address" autocomplete="email">
+          <button class="email-btn" onclick="signup('h-email','h-ok','h-form')">Join the Waitlist →</button>
+        </div>
+        <div id="h-ok" class="success-msg">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="#00D97E" opacity="0.15"/><path d="M5 8l2 2 4-4" stroke="#00D97E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          You're on the list. We'll be in touch.
+        </div>
+        <p class="form-note">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm0 4.5v3M6 4h.005" stroke="#3D4F6B" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Early access only. No spam. Not financial advice.
+        </p>
+      </div>
+
+      <div class="hero-stats reveal d4">
+        <div>
+          <span class="stat-val">10K+</span>
+          <div class="stat-lbl">Sources monitored</div>
+        </div>
+        <div>
+          <span class="stat-val">&lt;2s</span>
+          <div class="stat-lbl">Signal detection</div>
+        </div>
+        <div>
+          <span class="stat-val">24/7</span>
+          <div class="stat-lbl">Global coverage</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="hiw" id="how-it-works">
+  <div class="container">
+    <div class="hiw-head">
+      <div class="s-label reveal">Process</div>
+      <h2 class="s-title reveal d1">From event to insight<br><span class="grad-text">in seconds.</span></h2>
+      <p class="s-sub reveal d2">Every alert passes through four precision stages — giving you context, not just noise.</p>
+    </div>
+    <div class="steps">
+
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-ico">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M10 2L3 7v6l7 5 7-5V7l-7-5z" stroke="#00C9A7" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M10 2v10M3 7l7 5 7-5" stroke="#00C9A7" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="step-name">Classification</div>
+        <p class="step-desc">The event type is identified — geopolitical tension, supply disruption, macro data release, or corporate news.</p>
+      </div>
+
+      <div class="step reveal d1">
+        <div class="step-num">02</div>
+        <div class="step-ico">
+          <svg viewBox="0 0 20 20" fill="none">
+            <circle cx="6" cy="6" r="3" stroke="#00C9A7" stroke-width="1.4"/>
+            <circle cx="14" cy="14" r="3" stroke="#00C9A7" stroke-width="1.4"/>
+            <path d="M9 6h2a3 3 0 013 3v2" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="step-name">Asset Mapping</div>
+        <p class="step-desc">The event is mapped to the assets most likely to move — commodities, equities, indices, and sectors.</p>
+      </div>
+
+      <div class="step reveal d2">
+        <div class="step-num">03</div>
+        <div class="step-ico">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M3 14l4-4 3 3 4-5 3 2" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="17" cy="10" r="2.5" fill="#00C9A7" opacity="0.25" stroke="#00C9A7" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="step-name">Impact Evaluation</div>
+        <p class="step-desc">A directional bias (bullish or bearish) and confidence level are assigned using historical context and real-time data.</p>
+      </div>
+
+      <div class="step reveal d3">
+        <div class="step-num">04</div>
+        <div class="step-ico">
+          <svg viewBox="0 0 20 20" fill="none">
+            <rect x="3" y="4" width="14" height="10" rx="1.5" stroke="#00C9A7" stroke-width="1.4"/>
+            <path d="M7 17h6M10 14v3" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="14.5" cy="4.5" r="2.5" fill="#00D97E"/>
+          </svg>
+        </div>
+        <div class="step-name">Alert Generation</div>
+        <p class="step-desc">A concise, actionable alert arrives in real time — what happened, why it matters, which assets are affected, and the directional read.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== ALERT PREVIEW ===== -->
+<section class="ap" id="signal" style="background: linear-gradient(180deg, transparent 0%, rgba(0,201,167,0.025) 50%, transparent 100%);">
+  <div class="container">
+    <div class="ap-layout">
+
+      <div>
+        <div class="s-label reveal">Live Signal Example</div>
+        <h2 class="s-title reveal d1">What an alert<br><span class="grad-text">looks like.</span></h2>
+        <blockquote class="ap-quote reveal d2">
+          "Most people only see the outcome.<br>StockSight AI shows you the cause."
+        </blockquote>
+        <p class="s-sub reveal d2">Each alert is structured to cut through noise instantly — event, context, affected assets, and a directional read, in a single view.</p>
+      </div>
+
+      <div class="a-card reveal d1" id="a-card">
+        <div class="a-head">
+          <div class="a-meta">
+            <span class="a-type mono">// GEOPOLITICAL · OIL SUPPLY</span>
+            <span class="a-time mono" id="a-ts">Today, 14:32:07 UTC</span>
+          </div>
+          <div class="bull-badge">
+            <span class="bull-dot"></span>BULLISH
+          </div>
+        </div>
+
+        <div class="a-title">Iran threatens to close the Strait of Hormuz</div>
+        <p class="a-desc">Potential oil supply disruption affecting ~21% of global petroleum trade. Historical precedent shows significant upward pressure on WTI and Brent in the hours following similar escalations.</p>
+
+        <div class="a-div"></div>
+
+        <div class="a-slbl mono">AFFECTED ASSETS</div>
+        <div class="chips">
+          <div class="chip">🛢 Crude Oil (WTI)</div>
+          <div class="chip">🛢 Brent Crude</div>
+          <div class="chip">📈 Energy ETFs</div>
+          <div class="chip">🏭 Oil Majors</div>
+        </div>
+
+        <div>
+          <div class="conf-row">
+            <span class="conf-lbl mono">SIGNAL CONFIDENCE</span>
+            <span class="conf-val mono">78%</span>
+          </div>
+          <div class="conf-track">
+            <div class="conf-fill" id="c-fill"></div>
+          </div>
+        </div>
+
+        <div class="a-foot">
+          <span class="a-src mono">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#3D4F6B" stroke-width="1"/><path d="M5 3v2.5L7 7" stroke="#3D4F6B" stroke-width="1" stroke-linecap="round"/></svg>
+            Detected 2m ago
+          </span>
+          <span class="a-act">
+            View full analysis
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="#00C9A7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== BENEFITS ===== -->
+<section class="ben" id="features">
+  <div class="container">
+    <div class="s-label reveal">Why StockSight AI</div>
+    <h2 class="s-title reveal d1">Built for speed,<br><span class="grad-text">designed for clarity.</span></h2>
+    <div class="ben-grid">
+
+      <div class="b-card reveal">
+        <div class="b-ico ico-teal">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M13 2L4.5 13.5H12L11 22L19.5 10.5H12L13 2Z" stroke="#00C9A7" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="b-name">Speed</div>
+        <p class="b-desc">Signals detected and delivered in under two seconds. By the time a headline appears on a news feed, you already have the context and directional read.</p>
+      </div>
+
+      <div class="b-card reveal d1">
+        <div class="b-ico ico-blue">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="#2979FF" stroke-width="1.5"/>
+            <circle cx="12" cy="12" r="3" fill="#2979FF" opacity="0.25"/>
+            <path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="#2979FF" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="b-name">Clarity</div>
+        <p class="b-desc">No raw data dumps. No ambiguous headlines. Every alert tells you exactly what happened, why it matters, and which assets are in play.</p>
+      </div>
+
+      <div class="b-card reveal d2">
+        <div class="b-ico ico-green">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M3 15l5-5 4 4 5-7 4 3" stroke="#00D97E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 20h18" stroke="#00D97E" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="b-name">Context</div>
+        <p class="b-desc">Markets move on the cause, not the effect. StockSight AI surfaces the signal behind the move — giving you the edge to act before the crowd catches on.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHO IT'S FOR ===== -->
+<section class="who" id="who" style="background: linear-gradient(180deg, transparent 0%, rgba(41,121,255,0.025) 50%, transparent 100%);">
+  <div class="container">
+    <div class="who-layout">
+
+      <div>
+        <div class="s-label reveal">Who It's For</div>
+        <h2 class="s-title reveal d1">For traders tired<br><span class="grad-text">of being late.</span></h2>
+        <div class="who-items">
+
+          <div class="who-item reveal d1">
+            <div class="wi-ico">
+              <svg viewBox="0 0 18 18" fill="none"><path d="M9 2a4 4 0 100 8 4 4 0 000-8zM3 16a6 6 0 0112 0" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="wi-title">Retail Traders</div>
+              <div class="wi-desc">Who want institutional-grade signal awareness without institutional resources or teams behind them.</div>
+            </div>
+          </div>
+
+          <div class="who-item reveal d2">
+            <div class="wi-ico">
+              <svg viewBox="0 0 18 18" fill="none"><path d="M2 13l4-4 3 3 4-6 3 3" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="wi-title">Active Investors</div>
+              <div class="wi-desc">Monitoring macro trends and needing real-time context on what's driving price action across markets.</div>
+            </div>
+          </div>
+
+          <div class="who-item reveal d3">
+            <div class="wi-ico">
+              <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#00C9A7" stroke-width="1.4"/><path d="M9 6v3l2 2" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="wi-title">Market Followers</div>
+              <div class="wi-desc">Keen on financial news and macro events — wanting to genuinely understand what's driving markets, not just react to them.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="who-panel reveal d2">
+        <svg class="mini-svg" viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="cg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#00C9A7"/>
+              <stop offset="100%" stop-color="#2979FF"/>
+            </linearGradient>
+            <linearGradient id="cg2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00C9A7" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#00C9A7" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,88 L35,82 L65,86 L95,68 L125,71 L155,52 L168,56 L190,28 L215,22 L245,33 L275,18 L320,12"
+            fill="none" stroke="url(#cg)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M0,88 L35,82 L65,86 L95,68 L125,71 L155,52 L168,56 L190,28 L215,22 L245,33 L275,18 L320,12 L320,110 L0,110Z"
+            fill="url(#cg2)"/>
+          <!-- Signal marker -->
+          <circle cx="155" cy="52" r="4.5" fill="#FFB800" opacity="0.85"/>
+          <line x1="155" y1="10" x2="155" y2="52" stroke="#FFB800" stroke-width="1" stroke-dasharray="3 2" opacity="0.5"/>
+          <text x="159" y="16" font-family="JetBrains Mono" font-size="8" fill="#FFB800" opacity="0.85">SIGNAL DETECTED</text>
+          <circle cx="190" cy="28" r="4" fill="#00D97E" opacity="0.9"/>
+        </svg>
+        <div class="mkt-row">
+          <span class="mkt-sym">WTI CRUDE</span>
+          <span class="mkt-px">$87.42</span>
+          <span class="mkt-chg mkt-up">▲ +3.24%</span>
+        </div>
+        <div class="mkt-row">
+          <span class="mkt-sym">BRENT</span>
+          <span class="mkt-px">$91.18</span>
+          <span class="mkt-chg mkt-up">▲ +2.87%</span>
+        </div>
+        <div class="mkt-row">
+          <span class="mkt-sym">S&amp;P 500</span>
+          <span class="mkt-px">5,241.3</span>
+          <span class="mkt-chg mkt-dn">▼ -0.42%</span>
+        </div>
+        <div class="mkt-row">
+          <span class="mkt-sym">GOLD</span>
+          <span class="mkt-px">$2,318</span>
+          <span class="mkt-chg mkt-up">▲ +0.91%</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== FINAL CTA ===== -->
+<section class="fcta" id="waitlist">
+  <div class="container">
+    <div class="fcta-inner">
+      <div class="s-label reveal" style="justify-content:center;">Early Access</div>
+      <h2 class="fcta-h reveal d1">
+        React faster.<br>
+        <span class="grad-text">Understand more.</span>
+      </h2>
+      <p class="fcta-sub reveal d2">
+        Join the waitlist and be among the first to access real-time market intelligence that shows you the cause, not just the outcome.
+      </p>
+      <div class="fcta-form reveal d3" id="f-form">
+        <input class="email-inp" type="email" id="f-email" placeholder="your@email.com" autocomplete="email">
+        <button class="email-btn" onclick="signup('f-email','f-ok','f-form')">Get Early Access →</button>
+      </div>
+      <div id="f-ok" class="success-msg reveal" style="max-width:450px;margin:0 auto;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="#00D97E" opacity="0.15"/><path d="M5 8l2 2 4-4" stroke="#00D97E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        You're on the list. We'll be in touch soon.
+      </div>
+      <p class="form-note reveal d4" style="justify-content:center; margin-top:14px;">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm0 4.5v3M6 4h.005" stroke="#3D4F6B" stroke-width="1.2" stroke-linecap="round"/></svg>
+        StockSight AI is not financial advice. For informational purposes only.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="foot-row">
+      <a href="#" class="foot-logo">
+        <img src="brand_assets/StockSight Logo.jpeg" alt="StockSight AI">
+        <span class="foot-logo-name">StockSight AI</span>
+      </a>
+      <p class="foot-disc">
+        StockSight AI is not financial advice. All alerts are for informational and educational purposes only. Past signal accuracy does not guarantee future results.
+      </p>
+      <ul class="foot-links">
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---- NAV SCROLL ---- */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 44), { passive: true });
+
+/* ---- SCROLL REVEAL ---- */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    if (e.target.id === 'a-card') {
+      setTimeout(() => document.getElementById('c-fill').classList.add('anim'), 450);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ---- HERO INSTANT REVEAL ---- */
+window.addEventListener('load', () => {
+  document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+    setTimeout(() => el.classList.add('in'), 100 + i * 130);
+  });
+});
+
+/* ---- TICKER ---- */
+const TICKS = [
+  {s:'WTI CRUDE', p:'$87.42',  c:'+3.24%', up:true},
+  {s:'BRENT',     p:'$91.18',  c:'+2.87%', up:true},
+  {s:'GOLD',      p:'$2,318',  c:'+0.91%', up:true},
+  {s:'S&P 500',   p:'5,241',   c:'-0.42%', up:false},
+  {s:'EUR/USD',   p:'1.0842',  c:'-0.11%', up:false},
+  {s:'NASDAQ',    p:'18,432',  c:'+0.62%', up:true},
+  {s:'SILVER',    p:'$29.14',  c:'+1.44%', up:true},
+  {s:'GBP/USD',   p:'1.2731',  c:'+0.08%', up:true},
+  {s:'BTC',       p:'$67,210', c:'+2.11%', up:true},
+  {s:'VIX',       p:'16.42',   c:'+4.21%', up:false},
+  {s:'COPPER',    p:'$4.82',   c:'-0.34%', up:false},
+  {s:'DAX',       p:'18,104',  c:'+0.29%', up:true},
+];
+const mkTick = () => TICKS.map(t =>
+  `<div class="t-item">
+     <span class="t-sym">${t.s}</span>
+     <span class="t-px">${t.p}</span>
+     <span class="${t.up?'t-up':'t-dn'}">${t.up?'▲':'▼'} ${t.c}</span>
+     <span class="t-sep">·</span>
+   </div>`).join('');
+const ticker = document.getElementById('ticker');
+ticker.innerHTML = mkTick() + mkTick();
+
+/* ---- LIVE TIMESTAMP ---- */
+function updateTs() {
+  const n = new Date(), z = v => String(v).padStart(2,'0');
+  const el = document.getElementById('a-ts');
+  if (el) el.textContent = `Today, ${z(n.getUTCHours())}:${z(n.getUTCMinutes())}:${z(n.getUTCSeconds())} UTC`;
+}
+updateTs(); setInterval(updateTs, 1000);
+
+/* ---- SIGNUP ---- */
+function signup(inputId, okId, formId) {
+  const inp = document.getElementById(inputId);
+  if (!inp.value.trim() || !inp.value.includes('@')) {
+    inp.style.outline = '2px solid #FF5B7A';
+    setTimeout(() => inp.style.outline = '', 1600);
+    return;
+  }
+  document.getElementById(formId).style.display = 'none';
+  document.getElementById(okId).classList.add('show');
+}
+
+/* ---- BEAMS BACKGROUND (ported from BeamsBackground component) ---- */
+(function(){
+  const canvas = document.getElementById('pcvs');
+  const ctx    = canvas.getContext('2d');
+  const COUNT  = 30;
+  let beams    = [];
+
+  function createBeam(w, h) {
+    return {
+      x:          Math.random() * w * 1.5 - w * 0.25,
+      y:          Math.random() * h * 1.5 - h * 0.25,
+      width:      30 + Math.random() * 60,
+      length:     h * 2.5,
+      angle:      -35 + Math.random() * 10,
+      speed:      0.6 + Math.random() * 1.2,
+      opacity:    0.12 + Math.random() * 0.16,
+      hue:        175 + Math.random() * 45,   /* teal → blue, matches brand */
+      pulse:      Math.random() * Math.PI * 2,
+      pulseSpeed: 0.02 + Math.random() * 0.03,
+    };
+  }
+
+  function resetBeam(beam, i) {
+    const col     = i % 3;
+    const spacing = innerWidth / 3;
+    beam.y       = innerHeight + 100;
+    beam.x       = col * spacing + spacing / 2 + (Math.random() - 0.5) * spacing * 0.5;
+    beam.width   = 100 + Math.random() * 100;
+    beam.speed   = 0.5 + Math.random() * 0.4;
+    beam.hue     = 175 + (i * 45) / COUNT;
+    beam.opacity = 0.2 + Math.random() * 0.1;
+  }
+
+  function drawBeam(beam) {
+    ctx.save();
+    ctx.translate(beam.x, beam.y);
+    ctx.rotate(beam.angle * Math.PI / 180);
+
+    const op   = beam.opacity * (0.8 + Math.sin(beam.pulse) * 0.2);
+    const grad = ctx.createLinearGradient(0, 0, 0, beam.length);
+    grad.addColorStop(0,   `hsla(${beam.hue},85%,65%,0)`);
+    grad.addColorStop(0.1, `hsla(${beam.hue},85%,65%,${op * 0.5})`);
+    grad.addColorStop(0.4, `hsla(${beam.hue},85%,65%,${op})`);
+    grad.addColorStop(0.6, `hsla(${beam.hue},85%,65%,${op})`);
+    grad.addColorStop(0.9, `hsla(${beam.hue},85%,65%,${op * 0.5})`);
+    grad.addColorStop(1,   `hsla(${beam.hue},85%,65%,0)`);
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(-beam.width / 2, 0, beam.width, beam.length);
+    ctx.restore();
+  }
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = innerWidth  * dpr;
+    canvas.height = innerHeight * dpr;
+    canvas.style.width  = innerWidth  + 'px';
+    canvas.style.height = innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    beams = Array.from({length: COUNT}, () => createBeam(innerWidth, innerHeight));
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    ctx.filter = 'blur(35px)';
+    beams.forEach((b, i) => {
+      b.y     -= b.speed;
+      b.pulse += b.pulseSpeed;
+      if (b.y + b.length < -100) resetBeam(b, i);
+      drawBeam(b);
+    });
+    requestAnimationFrame(animate);
+  }
+
+  resize();
+  window.addEventListener('resize', resize, {passive: true});
+  animate();
+})();
+</script>
+</body>
+</html>
