@@ -8,33 +8,33 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
     /* ===== VARIABLES ===== */
     :root {
-      --bg:        #080c14;
-      --bg-2:      #0d1321;
-      --teal:      #00C9A7;
+      --bg:        #0D0D1A;
+      --surface:   #13131F;
+      --green:     #00D68F;
       --blue:      #2979FF;
-      --green:     #00D97E;
-      --red:       #FF5B7A;
-      --text:      #EEF2FF;
-      --text-2:    #7A8BA8;
-      --text-3:    #3D4F6B;
-      --border:    rgba(120,160,210,0.09);
-      --border-hi: rgba(0,201,167,0.28);
-      --glass:     rgba(10,16,30,0.65);
+      --red:       #FF4D6A;
+      --warning:   #FFB547;
+      --text:      #FFFFFF;
+      --text-2:    #A0A0B8;
+      --text-3:    #5A5A72;
+      --border:    #1E1E30;
+      --border-hi: rgba(0,214,143,0.28);
+      --glass:     rgba(13,13,26,0.65);
       --glass-b:   rgba(255,255,255,0.05);
-      --grad:      linear-gradient(135deg, #00C9A7 0%, #2979FF 100%);
-      --grad-text: linear-gradient(130deg, #00C9A7 0%, #5AADFF 55%, #2979FF 100%);
+      --grad:      linear-gradient(135deg, #00D68F 0%, #2979FF 100%);
+      --grad-text: linear-gradient(130deg, #00D68F 0%, #5AADFF 55%, #2979FF 100%);
     }
 
     /* ===== RESET ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
       overflow-x: hidden;
@@ -49,8 +49,8 @@
       content: '';
       position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(0,201,167,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,201,167,0.035) 1px, transparent 1px);
+        linear-gradient(rgba(0,214,143,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,214,143,0.035) 1px, transparent 1px);
       background-size: 56px 56px;
       mask-image: radial-gradient(ellipse 90% 65% at 50% 0%, black 10%, transparent 100%);
     }
@@ -58,7 +58,7 @@
       content: '';
       position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse 55% 45% at 10% 15%, rgba(0,201,167,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 45% at 10% 15%, rgba(0,214,143,0.06) 0%, transparent 60%),
         radial-gradient(ellipse 55% 45% at 90% 85%, rgba(41,121,255,0.06) 0%, transparent 60%);
     }
 
@@ -77,7 +77,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .mono { font-family: 'JetBrains Mono', monospace; }
+    .mono { font-family: 'IBM Plex Mono', monospace; }
 
     /* ===== REVEAL ===== */
     .reveal {
@@ -94,14 +94,14 @@
     /* ===== SECTION LABELS ===== */
     .s-label {
       display: flex; align-items: center; gap: 10px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'IBM Plex Mono', monospace;
       font-size: 11px; font-weight: 400; letter-spacing: 0.15em;
-      text-transform: uppercase; color: var(--teal); margin-bottom: 16px;
+      text-transform: uppercase; color: var(--green); margin-bottom: 16px;
     }
-    .s-label::before { content: ''; display: block; width: 22px; height: 1px; background: var(--teal); }
+    .s-label::before { content: ''; display: block; width: 22px; height: 1px; background: var(--green); }
     .s-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: clamp(30px, 4vw, 48px);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; font-size: clamp(30px, 4vw, 48px);
       letter-spacing: -0.025em; line-height: 1.08; margin-bottom: 18px;
     }
     .s-sub {
@@ -117,7 +117,7 @@
       transition: background 0.35s, backdrop-filter 0.35s, border-color 0.35s;
     }
     nav.scrolled {
-      background: rgba(8,12,20,0.88);
+      background: rgba(13,13,26,0.88);
       backdrop-filter: blur(22px) saturate(1.4);
       border-color: var(--border);
     }
@@ -125,7 +125,7 @@
     .nav-logo { display: flex; align-items: center; gap: 11px; text-decoration: none; }
     .nav-logo img { height: 34px; border-radius: 6px; }
     .nav-logo-name {
-      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px;
       letter-spacing: -0.02em; color: var(--text);
     }
     .nav-logo-name em { font-style: normal; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -135,13 +135,13 @@
     .btn {
       display: inline-flex; align-items: center; gap: 7px;
       padding: 10px 22px; background: var(--grad);
-      color: #050a12; font-family: 'DM Sans', sans-serif;
+      color: #0D0D1A; font-family: 'Inter', sans-serif;
       font-weight: 700; font-size: 13.5px; border: none; border-radius: 8px;
       cursor: pointer; text-decoration: none;
       letter-spacing: 0.01em; white-space: nowrap;
       transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
     }
-    .btn:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,201,167,0.28); }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,214,143,0.28); }
     .ham { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
     .ham span { display: block; width: 22px; height: 2px; background: var(--text-2); border-radius: 2px; }
 
@@ -156,10 +156,10 @@
     .live-badge {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 6px 14px 6px 8px;
-      background: rgba(0,201,167,0.07);
-      border: 1px solid rgba(0,201,167,0.22);
+      background: rgba(0,214,143,0.07);
+      border: 1px solid rgba(0,214,143,0.22);
       border-radius: 100px; margin-bottom: 30px;
-      font-size: 11.5px; font-weight: 500; color: var(--teal);
+      font-size: 11.5px; font-weight: 500; color: var(--green);
       letter-spacing: 0.08em; text-transform: uppercase;
     }
     .live-dot {
@@ -167,13 +167,13 @@
       animation: pdot 2.2s ease-in-out infinite;
     }
     @keyframes pdot {
-      0%,100% { box-shadow: 0 0 0 0 rgba(0,217,126,0.5); }
-      60%      { box-shadow: 0 0 0 8px rgba(0,217,126,0); }
+      0%,100% { box-shadow: 0 0 0 0 rgba(0,214,143,0.5); }
+      60%      { box-shadow: 0 0 0 8px rgba(0,214,143,0); }
     }
 
     .hero-h1 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
       font-size: clamp(50px, 7.5vw, 88px);
       line-height: 0.97;
       letter-spacing: -0.035em;
@@ -197,19 +197,19 @@
       transition: border-color 0.3s, box-shadow 0.3s;
     }
     .email-form:focus-within {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(0,201,167,0.12);
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,214,143,0.12);
     }
     .email-inp {
       flex: 1; background: transparent; border: none;
       padding: 15px 20px; color: var(--text);
-      font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none;
+      font-family: 'Inter', sans-serif; font-size: 15px; outline: none;
     }
     .email-inp::placeholder { color: var(--text-3); }
     .email-btn {
       margin: 6px; padding: 11px 22px;
-      background: var(--grad); color: #050a12;
-      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 13.5px;
+      background: var(--grad); color: #0D0D1A;
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13.5px;
       border: none; border-radius: 8px; cursor: pointer;
       white-space: nowrap; letter-spacing: 0.02em;
       transition: opacity 0.2s, transform 0.2s;
@@ -222,8 +222,8 @@
     .success-msg {
       display: none; align-items: center; gap: 10px;
       padding: 14px 18px;
-      background: rgba(0,217,126,0.08);
-      border: 1px solid rgba(0,217,126,0.22);
+      background: rgba(0,214,143,0.08);
+      border: 1px solid rgba(0,214,143,0.22);
       border-radius: 10px;
       color: var(--green); font-size: 14px; font-weight: 500;
     }
@@ -236,7 +236,7 @@
     }
     .stat-val {
       display: block;
-      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
       font-size: 28px; letter-spacing: -0.02em;
       background: var(--grad-text);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -249,13 +249,13 @@
       overflow: hidden;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      background: rgba(8,12,20,0.6);
+      background: rgba(13,13,26,0.6);
       padding: 11px 0; position: relative; z-index: 2;
     }
     .ticker-inner { display: flex; gap: 40px; width: max-content; animation: tick 35s linear infinite; }
     .ticker-wrap:hover .ticker-inner { animation-play-state: paused; }
     @keyframes tick { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-    .t-item { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; white-space: nowrap; }
+    .t-item { display: flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; white-space: nowrap; }
     .t-sym  { color: var(--text-2); font-weight: 500; }
     .t-px   { color: var(--text); }
     .t-up   { color: var(--green); }
@@ -282,21 +282,21 @@
       backdrop-filter: blur(12px);
       transition: border-color 0.3s, transform 0.35s;
     }
-    .step:hover { border-color: rgba(0,201,167,0.22); transform: translateY(-5px); }
+    .step:hover { border-color: rgba(0,214,143,0.22); transform: translateY(-5px); }
     .step-num {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'IBM Plex Mono', monospace;
       font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
-      color: var(--teal); margin-bottom: 18px;
+      color: var(--green); margin-bottom: 18px;
     }
     .step-ico {
       width: 44px; height: 44px; border-radius: 10px;
-      background: rgba(0,201,167,0.08); border: 1px solid rgba(0,201,167,0.15);
+      background: rgba(0,214,143,0.08); border: 1px solid rgba(0,214,143,0.15);
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 18px;
     }
     .step-ico svg { width: 20px; height: 20px; }
     .step-name {
-      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
       font-size: 15.5px; color: var(--text); margin-bottom: 9px; letter-spacing: -0.01em;
     }
     .step-desc { font-size: 13.5px; line-height: 1.6; color: var(--text-2); font-weight: 300; }
@@ -308,14 +308,14 @@
       font-size: 15px; line-height: 1.75; color: var(--text-2);
       font-style: italic; font-weight: 300;
       padding: 18px 0 18px 20px;
-      border-left: 2px solid var(--teal);
+      border-left: 2px solid var(--green);
       margin: 28px 0;
     }
 
     /* the card */
     .a-card {
-      background: rgba(6,11,22,0.94);
-      border: 1px solid rgba(0,201,167,0.18);
+      background: rgba(13,13,26,0.94);
+      border: 1px solid rgba(0,214,143,0.18);
       border-radius: 20px; padding: 28px;
       backdrop-filter: blur(20px);
       box-shadow: 0 40px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03);
@@ -328,14 +328,14 @@
     }
     .a-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
     .a-meta { display: flex; flex-direction: column; gap: 5px; }
-    .a-type { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase; }
-    .a-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); }
+    .a-type { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase; }
+    .a-time { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-3); }
     .bull-badge {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 6px 12px;
-      background: rgba(0,217,126,0.1); border: 1px solid rgba(0,217,126,0.25);
+      background: rgba(0,214,143,0.1); border: 1px solid rgba(0,214,143,0.25);
       border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'IBM Plex Mono', monospace;
       font-size: 11px; font-weight: 500; color: var(--green);
       letter-spacing: 0.08em; text-transform: uppercase;
       white-space: nowrap;
@@ -343,37 +343,37 @@
     }
     .bull-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pdot 2.2s infinite; }
     @keyframes badge-glow {
-      0%,100% { box-shadow: 0 0 0 0 rgba(0,217,126,0); }
-      50%      { box-shadow: 0 0 14px 0 rgba(0,217,126,0.22); }
+      0%,100% { box-shadow: 0 0 0 0 rgba(0,214,143,0); }
+      50%      { box-shadow: 0 0 14px 0 rgba(0,214,143,0.22); }
     }
     .a-title {
-      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
       font-size: 17px; line-height: 1.38; letter-spacing: -0.01em;
       color: var(--text); margin-bottom: 9px;
     }
     .a-desc { font-size: 13.5px; line-height: 1.65; color: var(--text-2); font-weight: 300; margin-bottom: 20px; }
     .a-div  { height: 1px; background: var(--border); margin-bottom: 18px; }
-    .a-slbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+    .a-slbl { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
     .chips  { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
     .chip {
       display: inline-flex; align-items: center; gap: 5px;
       padding: 5px 11px;
       background: rgba(41,121,255,0.07); border: 1px solid rgba(41,121,255,0.18);
-      border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+      border-radius: 6px; font-family: 'IBM Plex Mono', monospace;
       font-size: 11px; color: #7AB0FF;
     }
     .conf-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
-    .conf-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); }
-    .conf-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: var(--green); }
+    .conf-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); }
+    .conf-val { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; color: var(--green); }
     .conf-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
-    .conf-fill  { height: 100%; width: 0%; background: linear-gradient(90deg, var(--teal), var(--green)); border-radius: 4px; transition: width 1.6s cubic-bezier(0.22,1,0.36,1) 0.5s; }
+    .conf-fill  { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--green)); border-radius: 4px; transition: width 1.6s cubic-bezier(0.22,1,0.36,1) 0.5s; }
     .conf-fill.anim { width: 78%; }
     .a-foot {
       display: flex; align-items: center; justify-content: space-between;
       margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);
     }
-    .a-src  { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); display: flex; align-items: center; gap: 5px; }
-    .a-act  { font-size: 12px; font-weight: 500; color: var(--teal); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: gap 0.2s; }
+    .a-src  { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-3); display: flex; align-items: center; gap: 5px; }
+    .a-act  { font-size: 12px; font-weight: 500; color: var(--green); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: gap 0.2s; }
     .a-act:hover { gap: 8px; }
 
     /* ===== BENEFITS ===== */
@@ -388,22 +388,22 @@
     }
     .b-card::after {
       content: ''; position: absolute; inset: 0;
-      background: radial-gradient(circle at 25% 0%, rgba(0,201,167,0.07) 0%, transparent 60%);
+      background: radial-gradient(circle at 25% 0%, rgba(0,214,143,0.07) 0%, transparent 60%);
       opacity: 0; transition: opacity 0.3s;
     }
     .b-card:hover::after { opacity: 1; }
-    .b-card:hover { border-color: rgba(0,201,167,0.2); transform: translateY(-6px); box-shadow: 0 24px 52px rgba(0,0,0,0.35); }
+    .b-card:hover { border-color: rgba(0,214,143,0.2); transform: translateY(-6px); box-shadow: 0 24px 52px rgba(0,0,0,0.35); }
     .b-ico {
       width: 52px; height: 52px; border-radius: 13px;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 24px; position: relative; z-index: 1;
     }
-    .ico-teal  { background: rgba(0,201,167,0.09); border: 1px solid rgba(0,201,167,0.15); }
+    .ico-teal  { background: rgba(0,214,143,0.09); border: 1px solid rgba(0,214,143,0.15); }
     .ico-blue  { background: rgba(41,121,255,0.09); border: 1px solid rgba(41,121,255,0.15); }
-    .ico-green { background: rgba(0,217,126,0.07); border: 1px solid rgba(0,217,126,0.15); }
+    .ico-green { background: rgba(0,214,143,0.07); border: 1px solid rgba(0,214,143,0.15); }
     .b-ico svg { width: 24px; height: 24px; }
     .b-name {
-      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px;
       letter-spacing: -0.02em; color: var(--text); margin-bottom: 11px;
       position: relative; z-index: 1;
     }
@@ -420,26 +420,26 @@
       border-radius: 14px; backdrop-filter: blur(12px);
       transition: border-color 0.3s;
     }
-    .who-item:hover { border-color: rgba(0,201,167,0.22); }
+    .who-item:hover { border-color: rgba(0,214,143,0.22); }
     .wi-ico {
       width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
-      background: rgba(0,201,167,0.08); border: 1px solid rgba(0,201,167,0.15);
+      background: rgba(0,214,143,0.08); border: 1px solid rgba(0,214,143,0.15);
       display: flex; align-items: center; justify-content: center;
     }
     .wi-ico svg { width: 18px; height: 18px; }
-    .wi-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 15px; color: var(--text); margin-bottom: 3px; }
+    .wi-title { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15px; color: var(--text); margin-bottom: 3px; }
     .wi-desc  { font-size: 13px; line-height: 1.55; color: var(--text-2); font-weight: 300; }
 
     /* mini chart panel */
     .who-panel {
-      background: rgba(6,11,22,0.9); border: 1px solid var(--border);
+      background: rgba(13,13,26,0.9); border: 1px solid var(--border);
       border-radius: 18px; padding: 22px; overflow: hidden;
     }
     .mini-svg { width: 100%; height: 110px; display: block; margin-bottom: 14px; }
     .mkt-row {
       display: flex; justify-content: space-between; align-items: center;
       padding: 9px 0; border-bottom: 1px solid var(--border);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'IBM Plex Mono', monospace;
     }
     .mkt-row:last-child { border-bottom: none; }
     .mkt-sym { font-size: 11.5px; color: var(--text-2); }
@@ -452,7 +452,7 @@
     .fcta { padding: 160px 0; }
     .fcta-inner { text-align: center; max-width: 620px; margin: 0 auto; }
     .fcta-h {
-      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
       font-size: clamp(36px, 5.5vw, 62px);
       letter-spacing: -0.035em; line-height: 1.03;
       color: var(--text); margin-bottom: 18px;
@@ -464,7 +464,7 @@
       border-radius: 12px; overflow: hidden;
       transition: border-color 0.3s, box-shadow 0.3s;
     }
-    .fcta-form:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,201,167,0.12); }
+    .fcta-form:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px rgba(0,214,143,0.12); }
 
     /* ===== FOOTER ===== */
     footer {
@@ -473,7 +473,7 @@
     .foot-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
     .foot-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .foot-logo img { height: 26px; border-radius: 5px; }
-    .foot-logo-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14.5px; color: var(--text-2); }
+    .foot-logo-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14.5px; color: var(--text-2); }
     .foot-disc { font-size: 11.5px; color: var(--text-3); max-width: 440px; line-height: 1.65; text-align: center; }
     .foot-links { display: flex; gap: 22px; list-style: none; }
     .foot-links a { font-size: 12.5px; color: var(--text-3); text-decoration: none; transition: color 0.2s; }
@@ -549,11 +549,11 @@
           <button class="email-btn" onclick="signup('h-email','h-ok','h-form')">Join the Waitlist →</button>
         </div>
         <div id="h-ok" class="success-msg">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="#00D97E" opacity="0.15"/><path d="M5 8l2 2 4-4" stroke="#00D97E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="#00D68F" opacity="0.15"/><path d="M5 8l2 2 4-4" stroke="#00D68F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           You're on the list. We'll be in touch.
         </div>
         <p class="form-note">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm0 4.5v3M6 4h.005" stroke="#3D4F6B" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm0 4.5v3M6 4h.005" stroke="#5A5A72" stroke-width="1.2" stroke-linecap="round"/></svg>
           Early access only. No spam. Not financial advice.
         </p>
       </div>
@@ -596,8 +596,8 @@
         <div class="step-num">01</div>
         <div class="step-ico">
           <svg viewBox="0 0 20 20" fill="none">
-            <path d="M10 2L3 7v6l7 5 7-5V7l-7-5z" stroke="#00C9A7" stroke-width="1.4" stroke-linejoin="round"/>
-            <path d="M10 2v10M3 7l7 5 7-5" stroke="#00C9A7" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M10 2L3 7v6l7 5 7-5V7l-7-5z" stroke="#00D68F" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M10 2v10M3 7l7 5 7-5" stroke="#00D68F" stroke-width="1.4" stroke-linejoin="round"/>
           </svg>
         </div>
         <div class="step-name">Classification</div>
@@ -608,9 +608,9 @@
         <div class="step-num">02</div>
         <div class="step-ico">
           <svg viewBox="0 0 20 20" fill="none">
-            <circle cx="6" cy="6" r="3" stroke="#00C9A7" stroke-width="1.4"/>
-            <circle cx="14" cy="14" r="3" stroke="#00C9A7" stroke-width="1.4"/>
-            <path d="M9 6h2a3 3 0 013 3v2" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="6" cy="6" r="3" stroke="#00D68F" stroke-width="1.4"/>
+            <circle cx="14" cy="14" r="3" stroke="#00D68F" stroke-width="1.4"/>
+            <path d="M9 6h2a3 3 0 013 3v2" stroke="#00D68F" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
         </div>
         <div class="step-name">Asset Mapping</div>
@@ -621,8 +621,8 @@
         <div class="step-num">03</div>
         <div class="step-ico">
           <svg viewBox="0 0 20 20" fill="none">
-            <path d="M3 14l4-4 3 3 4-5 3 2" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="17" cy="10" r="2.5" fill="#00C9A7" opacity="0.25" stroke="#00C9A7" stroke-width="1"/>
+            <path d="M3 14l4-4 3 3 4-5 3 2" stroke="#00D68F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="17" cy="10" r="2.5" fill="#00D68F" opacity="0.25" stroke="#00D68F" stroke-width="1"/>
           </svg>
         </div>
         <div class="step-name">Impact Evaluation</div>
@@ -633,9 +633,9 @@
         <div class="step-num">04</div>
         <div class="step-ico">
           <svg viewBox="0 0 20 20" fill="none">
-            <rect x="3" y="4" width="14" height="10" rx="1.5" stroke="#00C9A7" stroke-width="1.4"/>
-            <path d="M7 17h6M10 14v3" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round"/>
-            <circle cx="14.5" cy="4.5" r="2.5" fill="#00D97E"/>
+            <rect x="3" y="4" width="14" height="10" rx="1.5" stroke="#00D68F" stroke-width="1.4"/>
+            <path d="M7 17h6M10 14v3" stroke="#00D68F" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="14.5" cy="4.5" r="2.5" fill="#00D68F"/>
           </svg>
         </div>
         <div class="step-name">Alert Generation</div>
@@ -647,7 +647,7 @@
 </section>
 
 <!-- ===== ALERT PREVIEW ===== -->
-<section class="ap" id="signal" style="background: linear-gradient(180deg, transparent 0%, rgba(0,201,167,0.025) 50%, transparent 100%);">
+<section class="ap" id="signal" style="background: linear-gradient(180deg, transparent 0%, rgba(0,214,143,0.025) 50%, transparent 100%);">
   <div class="container">
     <div class="ap-layout">
 
@@ -696,12 +696,12 @@
 
         <div class="a-foot">
           <span class="a-src mono">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#3D4F6B" stroke-width="1"/><path d="M5 3v2.5L7 7" stroke="#3D4F6B" stroke-width="1" stroke-linecap="round"/></svg>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#5A5A72" stroke-width="1"/><path d="M5 3v2.5L7 7" stroke="#5A5A72" stroke-width="1" stroke-linecap="round"/></svg>
             Detected 2m ago
           </span>
           <span class="a-act">
             View full analysis
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="#00C9A7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="#00D68F" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
         </div>
       </div>
@@ -720,7 +720,7 @@
       <div class="b-card reveal">
         <div class="b-ico ico-teal">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M13 2L4.5 13.5H12L11 22L19.5 10.5H12L13 2Z" stroke="#00C9A7" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M13 2L4.5 13.5H12L11 22L19.5 10.5H12L13 2Z" stroke="#00D68F" stroke-width="1.5" stroke-linejoin="round"/>
           </svg>
         </div>
         <div class="b-name">Speed</div>
@@ -742,8 +742,8 @@
       <div class="b-card reveal d2">
         <div class="b-ico ico-green">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M3 15l5-5 4 4 5-7 4 3" stroke="#00D97E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M3 20h18" stroke="#00D97E" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M3 15l5-5 4 4 5-7 4 3" stroke="#00D68F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 20h18" stroke="#00D68F" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </div>
         <div class="b-name">Context</div>
@@ -766,7 +766,7 @@
 
           <div class="who-item reveal d1">
             <div class="wi-ico">
-              <svg viewBox="0 0 18 18" fill="none"><path d="M9 2a4 4 0 100 8 4 4 0 000-8zM3 16a6 6 0 0112 0" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg viewBox="0 0 18 18" fill="none"><path d="M9 2a4 4 0 100 8 4 4 0 000-8zM3 16a6 6 0 0112 0" stroke="#00D68F" stroke-width="1.4" stroke-linecap="round"/></svg>
             </div>
             <div>
               <div class="wi-title">Retail Traders</div>
@@ -776,7 +776,7 @@
 
           <div class="who-item reveal d2">
             <div class="wi-ico">
-              <svg viewBox="0 0 18 18" fill="none"><path d="M2 13l4-4 3 3 4-6 3 3" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg viewBox="0 0 18 18" fill="none"><path d="M2 13l4-4 3 3 4-6 3 3" stroke="#00D68F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
             <div>
               <div class="wi-title">Active Investors</div>
@@ -786,7 +786,7 @@
 
           <div class="who-item reveal d3">
             <div class="wi-ico">
-              <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#00C9A7" stroke-width="1.4"/><path d="M9 6v3l2 2" stroke="#00C9A7" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#00D68F" stroke-width="1.4"/><path d="M9 6v3l2 2" stroke="#00D68F" stroke-width="1.4" stroke-linecap="round"/></svg>
             </div>
             <div>
               <div class="wi-title">Market Followers</div>
@@ -801,12 +801,12 @@
         <svg class="mini-svg" viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
           <defs>
             <linearGradient id="cg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#00C9A7"/>
+              <stop offset="0%" stop-color="#00D68F"/>
               <stop offset="100%" stop-color="#2979FF"/>
             </linearGradient>
             <linearGradient id="cg2" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#00C9A7" stop-opacity="0.22"/>
-              <stop offset="100%" stop-color="#00C9A7" stop-opacity="0"/>
+              <stop offset="0%" stop-color="#00D68F" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#00D68F" stop-opacity="0"/>
             </linearGradient>
           </defs>
           <path d="M0,88 L35,82 L65,86 L95,68 L125,71 L155,52 L168,56 L190,28 L215,22 L245,33 L275,18 L320,12"
@@ -814,10 +814,10 @@
           <path d="M0,88 L35,82 L65,86 L95,68 L125,71 L155,52 L168,56 L190,28 L215,22 L245,33 L275,18 L320,12 L320,110 L0,110Z"
             fill="url(#cg2)"/>
           <!-- Signal marker -->
-          <circle cx="155" cy="52" r="4.5" fill="#FFB800" opacity="0.85"/>
-          <line x1="155" y1="10" x2="155" y2="52" stroke="#FFB800" stroke-width="1" stroke-dasharray="3 2" opacity="0.5"/>
-          <text x="159" y="16" font-family="JetBrains Mono" font-size="8" fill="#FFB800" opacity="0.85">SIGNAL DETECTED</text>
-          <circle cx="190" cy="28" r="4" fill="#00D97E" opacity="0.9"/>
+          <circle cx="155" cy="52" r="4.5" fill="#FFB547" opacity="0.85"/>
+          <line x1="155" y1="10" x2="155" y2="52" stroke="#FFB547" stroke-width="1" stroke-dasharray="3 2" opacity="0.5"/>
+          <text x="159" y="16" font-family="IBM Plex Mono" font-size="8" fill="#FFB547" opacity="0.85">SIGNAL DETECTED</text>
+          <circle cx="190" cy="28" r="4" fill="#00D68F" opacity="0.9"/>
         </svg>
         <div class="mkt-row">
           <span class="mkt-sym">WTI CRUDE</span>
@@ -862,11 +862,11 @@
         <button class="email-btn" onclick="signup('f-email','f-ok','f-form')">Get Early Access →</button>
       </div>
       <div id="f-ok" class="success-msg reveal" style="max-width:450px;margin:0 auto;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="#00D97E" opacity="0.15"/><path d="M5 8l2 2 4-4" stroke="#00D97E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="#00D68F" opacity="0.15"/><path d="M5 8l2 2 4-4" stroke="#00D68F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         You're on the list. We'll be in touch soon.
       </div>
       <p class="form-note reveal d4" style="justify-content:center; margin-top:14px;">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm0 4.5v3M6 4h.005" stroke="#3D4F6B" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm0 4.5v3M6 4h.005" stroke="#5A5A72" stroke-width="1.2" stroke-linecap="round"/></svg>
         StockSight AI is not financial advice. For informational purposes only.
       </p>
     </div>
@@ -954,7 +954,7 @@ updateTs(); setInterval(updateTs, 1000);
 function signup(inputId, okId, formId) {
   const inp = document.getElementById(inputId);
   if (!inp.value.trim() || !inp.value.includes('@')) {
-    inp.style.outline = '2px solid #FF5B7A';
+    inp.style.outline = '2px solid #FF4D6A';
     setTimeout(() => inp.style.outline = '', 1600);
     return;
   }
