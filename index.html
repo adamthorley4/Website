@@ -951,15 +951,42 @@ function updateTs() {
 updateTs(); setInterval(updateTs, 1000);
 
 /* ---- SIGNUP ---- */
+const MAILCHIMP_URL = 'https://app.us2.list-manage.com/subscribe/post?u=53f7975ebe57fb07cc3451bf2&id=e40e97940a&f_id=00a7e5e3f0';
+
 function signup(inputId, okId, formId) {
   const inp = document.getElementById(inputId);
-  if (!inp.value.trim() || !inp.value.includes('@')) {
+  const email = inp.value.trim();
+
+  if (!email || !email.includes('@')) {
     inp.style.outline = '2px solid #FF4D6A';
     setTimeout(() => inp.style.outline = '', 1600);
     return;
   }
-  document.getElementById(formId).style.display = 'none';
-  document.getElementById(okId).classList.add('show');
+
+  const btn = document.querySelector('#' + formId + ' button');
+  const originalText = btn.textContent;
+  btn.textContent = 'Submitting…';
+  btn.disabled = true;
+
+  const callbackName = 'mc_' + Date.now();
+  const url = MAILCHIMP_URL.replace('/post?', '/post-json?')
+    + '&EMAIL=' + encodeURIComponent(email)
+    + '&c=' + callbackName;
+
+  window[callbackName] = function(data) {
+    delete window[callbackName];
+    document.getElementById(formId).style.display = 'none';
+    document.getElementById(okId).classList.add('show');
+  };
+
+  const script = document.createElement('script');
+  script.src = url;
+  script.onerror = function() {
+    btn.textContent = originalText;
+    btn.disabled = false;
+    delete window[callbackName];
+  };
+  document.body.appendChild(script);
 }
 
 /* ---- BEAMS BACKGROUND (ported from BeamsBackground component) ---- */
